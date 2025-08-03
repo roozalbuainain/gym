@@ -1,0 +1,128 @@
+﻿@using System.Security.Claims
+<!-- Sidebar -->
+<nav id="sidebar" class="">
+    <div class="sidebar-header">
+        <img src="~/images/fitness_center.png" alt="Logo">
+        <h3>@User.FindFirst(ClaimTypes.Role)?.Value Profile</h3>
+    </div>
+
+
+    <ul class="list-unstyled components">
+        @if (User.IsInRole("admin"))
+        {
+            <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")">
+                <a asp-action="Dashboard" asp-controller="Admin">
+                    <i class="fas fa-cogs me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
+                <a asp-action="Index" asp-controller="Users">
+                    <i class="fas fa-users me-2"></i> Users
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Members" ? "active" : "")">
+                <a asp-action="Members" asp-controller="Admin">
+                    <i class="fas fa-user-friends me-2"></i> Members
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Packages" ? "active" : "")">
+                <a asp-action="Index" asp-controller="Packages">
+                    <i class="fas fa-box me-2"></i> Packages
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Classes" ? "active" : "")">
+                <a asp-action="Index" asp-controller="Classes">
+                    <i class="fas fa-dumbbell me-2"></i> Classes
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "ClassSchedules" ? "active" : "")">
+                <a asp-action="Index" asp-controller="ClassSchedules">
+                    <i class="fas fa-calendar-alt me-2"></i> Class Schedules
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Subscriptions" ? "active" : "")">
+                <a asp-action="Index" asp-controller="Subscriptions">
+                    <i class="fas fa-file-invoice me-2"></i> Subscriptions
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Feedbacks" ? "active" : "")">
+                <a asp-action="Index" asp-controller="Feedbacks">
+                    <i class="fas fa-comments me-2"></i> Feedbacks
+                </a>
+            </li>
+        }
+        else if (User.IsInRole("trainer"))
+        {
+            <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "TrainerDashboard" ? "active" : "")">
+                <a asp-action="TrainerDashboard" asp-controller="Trainer">
+                    <i class="fas fa-home me-2"></i> Trainer Dashboard
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "MyClasses" ? "active" : "")">
+                <a asp-action="MyClasses" asp-controller="Trainer">
+                    <i class="fas fa-dumbbell me-2"></i> My Classes
+                </a>
+            </li>
+            <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "ScheduleCalendar" ? "active" : "")">
+                <a asp-action="ScheduleCalendar" asp-controller="Trainer">
+                    <i class="fa-solid fa-calendar-days me-3 text-lg"></i>Schedule Calendar
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "MemberAttendances" ? "active" : "")">
+                <a asp-action="Index" asp-controller="MemberAttendances">
+                    <i class="fas fa-user-check me-2"></i>Members Attendance
+                </a>
+            </li>
+        }
+
+        <li class="mb-2 @(ViewContext.RouteData.Values["Action"]?.ToString() == "CreateAttendance" ? "active" : "")">
+            <a asp-action="CreateAttendance" asp-controller="Admin">
+                <i class="fa-solid fa-user-check me-3 text-lg"></i>
+                <span class="font-medium">Make Attendance</span>
+            </a>
+        </li>
+        <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "EditProfile" ? "active" : "")">
+            <a asp-action="EditProfile" asp-controller="Admin">
+                <i class="fas fa-user-cog me-2"></i> My Profile
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<style>
+    .wrapper {
+        display: flex;
+        width: 100%;
+    }
+
+    #sidebar {
+        width: 250px;
+        min-width: 250px;
+        max-width: 250px;
+        background: #343a40;
+        color: #fff;
+        transition: all 0.3s;
+    }
+
+        #sidebar.active {
+            margin-left: -250px;
+        }
+
+    #content {
+        width: 100%;
+        padding: 20px;
+        min-height: 100vh;
+        transition: all 0.3s;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>

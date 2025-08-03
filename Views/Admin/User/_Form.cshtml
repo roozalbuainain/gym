@@ -1,0 +1,53 @@
+﻿@using GYM_APP.ViewModels.UsersVMs
+@model object
+
+@{
+    var isEdit = Model is EditUserViewModel;
+    var editModel = isEdit ? Model as EditUserViewModel : null;
+    var createModel = isEdit ? null : Model as CreateUserViewModel;
+    var availableRoles = isEdit ? editModel!.AvailableRoles : createModel!.AvailableRoles;
+}
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="@(isEdit? editModel!.UsersName : createModel!.UsersName)"></label>
+        <input asp-for="@(isEdit? editModel!.UsersName : createModel!.UsersName)" class="form-control" />
+        <span asp-validation-for="@(isEdit? editModel!.UsersName : createModel!.UsersName)" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="@(isEdit? editModel!.UsersEmail : createModel!.UsersEmail)"></label>
+        <input asp-for="@(isEdit? editModel!.UsersEmail : createModel!.UsersEmail)" class="form-control" />
+        <span asp-validation-for="@(isEdit? editModel!.UsersEmail : createModel!.UsersEmail)" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="@(isEdit? editModel!.UsersPhoneNumber : createModel!.UsersPhoneNumber)"></label>
+        <input asp-for="@(isEdit? editModel!.UsersPhoneNumber : createModel!.UsersPhoneNumber)" class="form-control" />
+        <span asp-validation-for="@(isEdit? editModel!.UsersPhoneNumber : createModel!.UsersPhoneNumber)" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="@(isEdit? editModel!.UsersRole : createModel!.UsersRole)"></label>
+        <select asp-for="@(isEdit ? editModel!.UsersRole : createModel!.UsersRole)" class="form-control">
+            <option value="">Choose role</option>
+            @foreach (var role in availableRoles)
+            {
+                <option value="@role">@char.ToUpper(role[0])@role.Substring(1)</option>
+            }
+        </select>
+        <span asp-validation-for="@(isEdit? editModel!.UsersRole : createModel!.UsersRole)" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="@(isEdit? editModel!.Password : createModel!.Password)">Password @(isEdit ? "(leave blank if unchanged)" : "")</label>
+        <input asp-for="@(isEdit? editModel!.Password : createModel!.Password)" class="form-control" />
+        <span asp-validation-for="@(isEdit? editModel!.Password : createModel!.Password)" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label asp-for="@(isEdit? editModel!.ConfirmPassword : createModel!.ConfirmPassword)"></label>
+        <input asp-for="@(isEdit? editModel!.ConfirmPassword : createModel!.ConfirmPassword)" class="form-control" />
+        <span asp-validation-for="@(isEdit? editModel!.ConfirmPassword : createModel!.ConfirmPassword)" class="text-danger"></span>
+    </div>
+</div>

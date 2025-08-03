@@ -1,0 +1,240 @@
+﻿@model GYM_APP.ViewModels.TrainerVMs.TrainerCalendarViewModel
+
+@{
+    ViewData["Title"] = "Schedule Calendar";
+}
+
+<div class="container mx-auto px-4 py-8 flex gap-6">
+    <!-- Sidebar -->
+    <div class="w-1/4">
+        <div class="bg-white shadow-sm rounded-lg p-6">
+            <h5 class="text-lg font-semibold text-gray-800 mb-4">Filter Schedules</h5>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-medium">Class</label>
+                <select id="classFilter" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <option value="">All Classes</option>
+                    @foreach (var classItem in Model.Classes)
+                    {
+                        <option value="@classItem.ClassesId">@classItem.ClassesName</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-medium">Date Range</label>
+                <input type="date" id="startDate" class="w-full p-2 border rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <input type="date" id="endDate" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2 font-medium">Show Weekends</label>
+                <input type="checkbox" id="showWeekends" class="mr-2" checked>
+                <label for="showWeekends" class="text-gray-700">Include weekends</label>
+            </div>
+            <button id="resetFilters" class="btn-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition w-full">
+                Reset Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="w-3/4">
+        <!-- Header -->
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Schedule Calendar</h1>
+                <p class="text-gray-600">View and manage your weekly class schedules</p>
+            </div>
+        </div>
+
+        <!-- Calendar -->
+        <div class="card bg-white shadow-sm rounded-lg">
+            <div class="card-header bg-gray-100 p-4 rounded-t-lg flex justify-between items-center">
+                <h5 class="text-xl font-semibold text-gray-800">Weekly Schedule</h5>
+                <div>
+                    <button id="prevWeek" class="bg-gray-200 text-gray-700 px-3 py-1 rounded mr-2 hover:bg-gray-300">Previous</button>
+                    <button id="today" class="bg-gray-200 text-gray-700 px-3 py-1 rounded mr-2 hover:bg-gray-300">Today</button>
+                    <button id="nextWeek" class="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300">Next</button>
+                </div>
+            </div>
+            <div class="card-body p-6">
+                <div id="calendar" class="max-w-full"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Event Details -->
+<div id="eventModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Schedule Details</h3>
+        <div id="modalContent" class="text-gray-700 space-y-2">
+            <p><strong>Class:</strong> <span id="modalClass"></span></p>
+            <p><strong>Day:</strong> <span id="modalDay"></span></p>
+            <p><strong>Time:</strong> <span id="modalTime"></span></p>
+            <p><strong>Duration:</strong> <span id="modalDuration"></span></p>
+            <p><strong>Bookings:</strong> <span id="modalBookings"></span></p>
+        </div>
+        <div class="mt-6 flex justify-end gap-2">
+            <button id="modalClose" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition">Close</button>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <style>
+        .fc-timegrid-slot-label {
+            font-size: 14px;
+        }
+
+        .fc-event {
+            border-radius: 4px;
+            padding: 2px 4px;
+            cursor: pointer;
+        }
+
+        .fc-timegrid-event-harness, .fc-event {
+            border-color: white !important;
+            background-color: white !important;
+        }
+
+        .fc-event-main {
+            background-color: #ea8080;
+            color: #ffffff;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof FullCalendar === 'undefined') {
+                console.error('FullCalendar failed to load. Please check the CDN or network connection.');
+                return;
+            }
+
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'listWeek',
+                headerToolbar: false,
+                events: [
+                    @foreach (var schedule in Model.Schedules)
+                    {
+                            <text>
+                            {
+                                id: '@schedule.ClassScheduleId',
+                                title: '@schedule.ClassName (Bookings: @schedule.BookingsCount)', 
+                                start: new Date('@DateTime.Now.ToString("yyyy-MM-dd")T@schedule.ClassScheduleTime.ToString("HH:mm:ss")'),
+                                end: new Date('@DateTime.Now.ToString("yyyy-MM-dd")T@schedule.ClassScheduleTime.AddMinutes(schedule.ClassDuration).ToString("HH:mm:ss")'),
+                                extendedProps: {
+                                    scheduleId: @schedule.ClassScheduleId,
+                                    className: '@schedule.ClassName',
+                                    day: '@schedule.ClassScheduleDayOfWeek',
+                                    time: '@schedule.ClassScheduleTime.ToString("HH:mm")',
+                                    duration: @schedule.ClassDuration,
+                                        bookings: @schedule.BookingsCount
+                                }
+                            },
+                            </text>
+                    }
+                ],
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault();
+                    document.getElementById('modalClass').textContent = info.event.extendedProps.className;
+                    document.getElementById('modalDay').textContent = info.event.extendedProps.day;
+                    document.getElementById('modalTime').textContent = info.event.extendedProps.time;
+                    document.getElementById('modalDuration').textContent = info.event.extendedProps.duration + ' minutes';
+                    document.getElementById('modalBookings').textContent = info.event.extendedProps.bookings;
+                    document.getElementById('eventModal').classList.remove('hidden');
+                },
+                slotMinTime: '06:00:00',
+                slotMaxTime: '22:00:00',
+                height: 'auto',
+                eventColor: '#ea8080',
+                eventTextColor: '#ffffff',
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                },
+                displayEventEnd: true,
+                allDaySlot: false
+            });
+
+            try {
+                calendar.render();
+            } catch (error) {
+                console.error('Failed to render calendar:', error);
+            }
+
+            document.getElementById('modalClose').addEventListener('click', function() {
+                document.getElementById('eventModal').classList.add('hidden');
+            });
+
+            document.getElementById('prevWeek').addEventListener('click', function() {
+                calendar.prev();
+            });
+            document.getElementById('today').addEventListener('click', function() {
+                calendar.today();
+            });
+            document.getElementById('nextWeek').addEventListener('click', function() {
+                calendar.next();
+            });
+
+            const initialEvents = calendar.getEvents();
+            document.getElementById('classFilter').addEventListener('change', function() {
+                const classId = this.value;
+                calendar.getEvents().forEach(event => event.remove());
+                const filteredEvents = classId
+                    ? initialEvents.filter(event => event.extendedProps.className === document.querySelector(`#classFilter option[value="${classId}"]`).textContent)
+                    : initialEvents;
+                filteredEvents.forEach(event => {
+                    calendar.addEvent({
+                        id: event.id,
+                        title: event.title,
+                        start: event.start,
+                        end: event.end,
+                        extendedProps: event.extendedProps
+                    });
+                });
+            });
+
+            document.getElementById('startDate').addEventListener('change', updateDateRange);
+            document.getElementById('endDate').addEventListener('change', updateDateRange);
+            function updateDateRange() {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                if (startDate && endDate) {
+                    calendar.setOption('date', startDate);
+                    calendar.setOption('events', initialEvents.filter(event => {
+                        const eventDate = event.start.toISOString().split('T')[0];
+                        return eventDate >= startDate && eventDate <= endDate;
+                    }));
+                }
+            }
+
+            document.getElementById('showWeekends').addEventListener('change', function() {
+                calendar.setOption('weekends', this.checked);
+            });
+
+            document.getElementById('resetFilters').addEventListener('click', function() {
+                document.getElementById('classFilter').value = '';
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                document.getElementById('showWeekends').checked = true;
+                calendar.getEvents().forEach(event => event.remove());
+                initialEvents.forEach(event => {
+                    calendar.addEvent({
+                        id: event.id,
+                        title: event.title,
+                        start: event.start,
+                        end: event.end,
+                        extendedProps: event.extendedProps
+                    });
+                });
+                calendar.setOption('weekends', true);
+                calendar.today();
+            });
+        });
+    </script>
+}

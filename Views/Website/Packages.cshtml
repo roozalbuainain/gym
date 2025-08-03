@@ -1,0 +1,31 @@
+﻿@model GYM_APP.ViewModels.WebsiteVMs.PackagesViewModel
+@{
+    ViewData["Title"] = "Packages";
+}
+
+<!-- Packages Section -->
+<section class="packages-section">
+    <div class="container">
+        <h2>Choose the Best Packages for You</h2>
+        <p>Choose a plan that best suits you and begin your journey toward a healthier, happier you.</p>
+        <div class="row">
+            @foreach (var package in Model.Packages)
+            {
+                <div class="col-md-4">
+                    <div class="package-card">
+                        <img src="~/images/fitness_center.png" alt="Fitness Center" class="img-fluid mb-3">
+                        <h3>@package.PackagesName</h3>
+                        <p class="price">@package.PackagesPrice?.ToString("N0")SAR</p>
+                        <ul>
+                            @foreach (var priv in package.Privileges.Split(','))
+                            {
+                                <li><i class="fas fa-check"></i> @priv.Trim()</li>
+                            }
+                        </ul>
+                        <a asp-action="Payment" asp-controller="Member" asp-route-packageId="@package.PackagesId" class="btn-subscribe">Subscribe</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

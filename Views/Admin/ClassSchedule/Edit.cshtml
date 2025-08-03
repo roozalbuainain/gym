@@ -1,0 +1,32 @@
+﻿@model GYM_APP.ViewModels.AdminVMs.ClassScheduleViewModel
+
+@{
+    ViewData["Title"] = "Edit Schedule";
+}
+
+<div class="card mt-4">
+    <div class="card-header">Edit Schedule</div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="ClassScheduleId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <partial name="~/Views/Admin/ClassSchedule/_Form.cshtml" model="Model" />
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save me-1"></i> Save
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

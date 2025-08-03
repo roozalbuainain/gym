@@ -1,0 +1,52 @@
+﻿@model GYM_APP.ViewModels.PackageVMs.PackageCreateViewModel
+
+<div class="mb-3">
+    <label asp-for="PackagesName" class="form-label"></label>
+    <input asp-for="PackagesName" class="form-control" />
+    <span asp-validation-for="PackagesName" class="text-danger"></span>
+</div>
+
+<div class="row">
+    <div class="mb-3 col-md-4">
+        <label asp-for="PackagesDurationDays" class="form-label"></label>
+        <input asp-for="PackagesDurationDays" class="form-control" />
+        <span asp-validation-for="PackagesDurationDays" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-md-4">
+        <label asp-for="PackagesPrice" class="form-label"></label>
+        <input asp-for="PackagesPrice" class="form-control" />
+        <span asp-validation-for="PackagesPrice" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-md-4">
+        <label asp-for="PackagesType" class="form-label"></label>
+        <select asp-for="PackagesType" class="form-control">
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        <span asp-validation-for="PackagesType" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="mb-3 col-md-4">
+        <label asp-for="PackagesMaxFreezeDays" class="form-label"></label>
+        <input asp-for="PackagesMaxFreezeDays" class="form-control" />
+        <span asp-validation-for="PackagesMaxFreezeDays" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-md-4">
+        <label asp-for="RefundPolicyDays" class="form-label"></label>
+        <input asp-for="RefundPolicyDays" class="form-control" />
+        <span asp-validation-for="RefundPolicyDays" class="text-danger"></span>
+    </div>
+    <div class="mb-3 col-md-4">
+        <label asp-for="DailyChargeIfStarted" class="form-label"></label>
+        <input asp-for="DailyChargeIfStarted" class="form-control" />
+        <span asp-validation-for="DailyChargeIfStarted" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Privileges" class="form-label"></label>
+    <textarea asp-for="Privileges" class="form-control"></textarea>
+    <span asp-validation-for="Privileges" class="text-danger"></span>
+</div>

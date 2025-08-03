@@ -1,0 +1,64 @@
+﻿@model List<GYM_APP.ViewModels.MemberVMs.SubscriptionViewModel>
+@{
+    ViewData["Title"] = "My Subscriptions";
+}
+
+<partial name="_Navbar" />
+
+<div class="container py-5">
+    <h3 class="text-center mb-4">My Subscriptions</h3>
+
+    <div class="row d-flex just">
+        @foreach (var subscription in Model)
+        {
+            var isActive = subscription.EndDate > DateTime.Now;
+            <div class="col-md-12">
+                <div class="card shadow-lg mb-4 p-5">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5 class="mb-2">
+                                @if (subscription.DurationDays < 30)
+                                {
+                                    @subscription.DurationDays <text>days</text>
+                                }
+                                else
+                                {
+                                    @(Math.Round(subscription.DurationDays / 30.0, 1)) <text>months</text>
+                                }
+                            </h5>
+
+                            <h6 class="mb-3">@subscription.Price.ToString("N0")SAR</h6>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-unstyled">
+                                @if (!string.IsNullOrEmpty(subscription.Privileges))
+                                {
+                                    foreach (var privilege in subscription.Privileges.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <li><i class="fas fa-check text-success me-2"></i> @privilege.Trim()</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-end d-flex flex-column justify-content-between">
+                            @if (isActive)
+                            {
+                                <span class="badge bg-primary p-2 mb-2">Active</span>
+                                <small class="text-muted">Subscription Date: @subscription.StartDate.ToString("dd/MM/yyyy")</small>
+                                <small class="text-muted">Ends on: @subscription.EndDate.ToString("dd/MM/yyyy")</small>
+                                <form method="post" asp-action="CancelSubscription" asp-controller="Member" asp-route-id="@subscription.SubscriptionId">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm mt-2">Cancel</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="badge bg-dark p-2 mb-2">Your subscription has ended</span>
+                                <small class="text-muted">Ended on: @subscription.EndDate.ToString("dd/MM/yyyy")</small>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

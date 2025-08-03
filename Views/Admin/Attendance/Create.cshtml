@@ -1,0 +1,103 @@
+﻿@model GYM_APP.ViewModels.AttendanceVMs.AttendanceCreateViewModel
+
+@{
+    ViewData["Title"] = "My Attendance";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">My Attendance</h1>
+            <p class="text-gray-600">Scan the QR code or use manual options to record your check-in or check-out</p>
+        </div>
+    </div>
+
+    <!-- QR Code and Manual Entry -->
+    <div class="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto">
+        <h5 class="text-lg font-semibold text-gray-800 mb-4">Record Your Attendance</h5>
+        <p class="text-gray-600 mb-4">Employee: @User.Identity?.Name</p>
+        <div id="qrCode" class="mt-4 flex justify-center"></div>
+        <p id="qrMessage" class="text-gray-600 mt-2 text-center hidden">Scan this QR code to record @(Model.NextAction ?? "check-in")</p>
+        <div class="mt-4 flex gap-4">
+            <form asp-action="Store" method="POST" class="w-full">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="UsersId" value="@ViewBag.CurrentUserId">
+                <input type="hidden" name="AttendancesType" value="check-in">
+                <button type="submit" id="manualCheckIn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition w-full" disabled>
+                    Manual Check-In
+                </button>
+            </form>
+            <form asp-action="Store" method="POST" class="w-full">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="UsersId" value="@ViewBag.CurrentUserId">
+                <input type="hidden" name="AttendancesType" value="check-out">
+                <button type="submit" id="manualCheckOut" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-green-700 transition w-full" disabled>
+                    Manual Check-Out
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrCode = document.getElementById('qrCode');
+            const qrMessage = document.getElementById('qrMessage');
+            const manualCheckIn = document.getElementById('manualCheckIn');
+            const manualCheckOut = document.getElementById('manualCheckOut');
+
+            function updateAttendanceStatus() {
+                fetch('/Attendance/Check?userId=@ViewBag.CurrentUserId')
+                    .then(response => response.json())
+                    .then(data => {
+                        manualCheckIn.disabled = data.checkInToday;
+                        manualCheckOut.disabled = !data.checkInToday || data.checkOutToday;
+                        qrMessage.textContent = 'Scan this QR code to record ' + (data.checkInToday ? 'check-out' : 'check-in');
+                    })
+                    .catch(error => {
+                        console.error('Error checking attendance:', error);
+                        alert('Failed to verify attendance status.');
+                    });
+            }
+
+            // Initial check
+            updateAttendanceStatus();
+
+            function generateQRcode() {
+                fetch('/Attendance/Check?userId=@ViewBag.CurrentUserId')
+                    .then(response => response.json())
+                    .then(data => {
+                        const type = data.checkInToday ? 'check-out' : 'check-in';
+                        const qrUrl = '@Url.Action("Scan", "Attendance")?userId=@ViewBag.CurrentUserId&type=' + type;
+                        qrCode.innerHTML = '';
+                        new QRCode(qrCode, {
+                            text: qrUrl,
+                            width: 200,
+                            height: 200,
+                            colorDark: '#ea8080',
+                            colorLight: '#ffffff'
+                        });
+                        qrMessage.classList.remove('hidden');
+                        if (data.checkInToday && data.checkOutToday) {
+                            alert('You have already checked in and out today.');
+                            return;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking attendance:', error);
+                        alert('Failed to generate QR code.');
+                    });
+            }
+
+            generateQRcode();
+        });
+    </script>
+}

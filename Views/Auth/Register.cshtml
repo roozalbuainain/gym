@@ -1,0 +1,169 @@
+﻿@model GYM_APP.ViewModels.AuthVMs.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center fw-bold my-4">Register as Member</h2>
+
+<div class="form-container">
+    <div class="form-title">Your Information</div>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <form method="POST" asp-action="Register">
+        @Html.AntiForgeryToken()
+
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter your full name">
+                <span asp-validation-for="Name" class="invalid-feedback d-block"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" placeholder="example@email.com">
+                <span asp-validation-for="Email" class="invalid-feedback d-block"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Minimum 8 characters">
+                <span asp-validation-for="Password" class="invalid-feedback d-block"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Re-type your password">
+                <span asp-validation-for="ConfirmPassword" class="invalid-feedback d-block"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Phone"></label>
+                <input asp-for="Phone" class="form-control" placeholder="05XXXXXXXX">
+                <span asp-validation-for="Phone" class="invalid-feedback d-block"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Gender"></label>
+                <select asp-for="Gender" class="form-select">
+                    <option disabled selected>Select Gender</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                </select>
+                <span asp-validation-for="Gender" class="invalid-feedback d-block"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+                <label asp-for="NationalId"></label>
+                <input asp-for="NationalId" class="form-control" placeholder="10-digit National ID">
+                <span asp-validation-for="NationalId" class="invalid-feedback d-block"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Age"></label>
+                <input asp-for="Age" class="form-control" min="10" max="100">
+                <span asp-validation-for="Age" class="invalid-feedback d-block"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Weight"></label>
+                <input asp-for="Weight" class="form-control" step="0.1" min="20" max="300">
+                <span asp-validation-for="Weight" class="invalid-feedback d-block"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Height"></label>
+                <input asp-for="Height" class="form-control" min="50" max="300">
+                <span asp-validation-for="Height" class="invalid-feedback d-block"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="HealthIssues"></label>
+                <input asp-for="HealthIssues" class="form-control" placeholder="Mention any health issues (optional)">
+                <span asp-validation-for="HealthIssues" class="invalid-feedback d-block"></span>
+            </div>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="Terms" class="form-check-input" />
+            <label class="form-check-label" for="Terms">
+                I accept the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a>.
+            </label>
+            <span asp-validation-for="Terms" class="invalid-feedback d-block"></span>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary w-50 px-5">Register</button>
+        </div>
+        <p class="text-center mt-3 mb-1">
+            have an account?
+            <a asp-action="Login">Login</a>
+        </p>
+    </form>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Membership Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ol>
+                    <li>
+                        <strong>Fees & Refunds:</strong>
+                        <ul>
+                            <li>No refund is allowed after 6 days from the payment date.</li>
+                            <li>Refund can only be processed in person by presenting the original invoice.</li>
+                            <li>The daily rate for membership is SAR 40.</li>
+                            <li>Membership is valid for 6 months starting from the invoice date.</li>
+                            <li>Promotional offers must be activated within 1 month of the invoice date.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Membership Freeze (with prior approval from management only):</strong>
+                        <ul>
+                            <li>1-month membership: Freeze allowed for up to 3 days.</li>
+                            <li>3-month membership: Freeze allowed for up to 2 weeks.</li>
+                            <li>6-month membership: Freeze allowed for up to 1 month.</li>
+                            <li>1-year membership: Freeze allowed for up to 2 months.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Membership Policy:</strong>
+                        <ul>
+                            <li>Memberships are non-transferable and cannot be shared without management approval.</li>
+                            <li>Please maintain cleanliness and take care of all equipment and center property.</li>
+                            <li>Disrespectful behavior or verbal abuse toward staff will not be tolerated.</li>
+                            <li>The gym is not responsible for any lost or stolen items.</li>
+                            <li>Photography is strictly prohibited inside the gym facilities.</li>
+                            <li>Members must adhere to the scheduled fitness class times.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">continue to register</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

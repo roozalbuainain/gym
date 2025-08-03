@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Terms and Conditions";
+}
+
+<div class="container my-5">
+    <div class="card p-4 shadow-sm">
+        <h2 class="text-center mb-4">Membership Terms and Conditions</h2>
+        <div class="terms-content">
+            <ol>
+                <li>
+                    <strong>Fees & Refunds:</strong>
+                    <ul>
+                        <li>No refund is allowed after 6 days from the payment date.</li>
+                        <li>Refund can only be processed in person by presenting the original invoice.</li>
+                        <li>The daily rate for membership is SAR 40.</li>
+                        <li>Membership is valid for 6 months starting from the invoice date.</li>
+                        <li>Promotional offers must be activated within 1 month of the invoice date.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Membership Freeze (with prior approval from management only):</strong>
+                    <ul>
+                        <li>1-month membership: Freeze allowed for up to 3 days.</li>
+                        <li>3-month membership: Freeze allowed for up to 2 weeks.</li>
+                        <li>6-month membership: Freeze allowed for up to 1 month.</li>
+                        <li>1-year membership: Freeze allowed for up to 2 months.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Membership Policy:</strong>
+                    <ul>
+                        <li>Memberships are non-transferable and cannot be shared without management approval.</li>
+                        <li>Please maintain cleanliness and take care of all equipment and center property.</li>
+                        <li>Disrespectful behavior or verbal abuse toward staff will not be tolerated.</li>
+                        <li>The gym is not responsible for any lost or stolen items.</li>
+                        <li>Photography is strictly prohibited inside the gym facilities.</li>
+                        <li>Members must adhere to the scheduled fitness class times.</li>
+                    </ul>
+                </li>
+            </ol>
+            <div class="form-check mt-4">
+                <input type="checkbox" class="form-check-input" id="termsAgreement" name="termsAgreement" required>
+                <label class="form-check-label" for="termsAgreement">I agree to the terms and conditions.</label>
+            </div>
+            <button type="button" class="btn btn-pink mt-3" onclick="window.location.href='@Url.Action("Payment", "Member")'">Continue to Payment</button>
+        </div>
+    </div>
+</div>

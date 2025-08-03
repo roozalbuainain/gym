@@ -1,0 +1,51 @@
+﻿@model IEnumerable<GYM_APP.Models.Class>
+
+@{
+    ViewData["Title"] = "Classes";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5>Classes</h5>
+        <a asp-action="Create" class="btn btn-primary float-end">Add Class</a>
+    </div>
+    <div class="card-body">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Capacity</th>
+                    <th>Trainer</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.ClassesName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ClassesDurationMinutes) min</td>
+                        <td>@Html.DisplayFor(modelItem => item.ClassesCapacity)</td>
+                        <td>@(item.Trainer?.UsersName ?? "-")</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ClassesId" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.ClassesId" method="post" class="d-inline"
+                                  onsubmit="return confirm('Are you sure?')">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

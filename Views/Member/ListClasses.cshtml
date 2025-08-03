@@ -1,0 +1,68 @@
+﻿@model GYM_APP.ViewModels.MemberVMs.BookClassesViewModel
+@{
+    ViewData["Title"] = "Book Classes";
+}
+
+<partial name="_Navbar" />
+
+<div class="container py-5">
+    <h3 class="text-center mb-4">Pick the class you like</h3>
+    <div class="rowx">
+        @foreach (var classItem in Model.Classes)
+        {
+            <div class="col-md-12 card mb-4 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">@classItem.ClassName</h5>
+                    <small class="text-muted">@classItem.ClassDescription</small>
+                </div>
+                <div class="card-body">
+                    @if (classItem.Schedules.Any())
+                    {
+                        @foreach (var schedule in classItem.Schedules)
+                        {
+                            @if (schedule.BookedCount < classItem.Capacity)
+                            {
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="~/images/class.jpg" alt="class" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <div class="ms-3">
+                                        <h6 class="mb-1">@schedule.Time</h6>
+                                        <div class="text-muted small">
+                                            @schedule.BookedCount/@classItem.Capacity seats booked
+                                        </div>
+                                    </div>
+                                    <div class="ms-auto">
+                                        @if (schedule.IsBooked)
+                                        {
+                                            <button class="btn btn-outline-secondary btn-sm px-3" disabled>
+                                                <i class="fas fa-check-circle me-1 text-success"></i> Booked
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <form method="post" asp-action="BookClass" asp-controller="Member">
+                                                <input type="hidden" name="ScheduleId" value="@schedule.ScheduleId">
+                                                <button type="submit" class="btn btn-primary btn-sm px-3">
+                                                    <i class="fas fa-calendar-check me-1"></i> Book
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning small mb-2">
+                                    Class at @schedule.Time is fully booked (@schedule.BookedCount/@classItem.Capacity).
+                                </div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No schedules available for this class.</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

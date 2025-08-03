@@ -1,0 +1,62 @@
+﻿@model GYM_APP.ViewModels.AdminVMs.AdminProfileViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Update Profile";
+}
+
+<div class="wrapper">
+    <partial name="_AdminLayout" />
+
+    <div id="content">
+        <div class="container-fluid">
+            <h4>Update Profile</h4>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+
+            <form asp-action="UpdateProfile" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label asp-for="UsersName" class="form-label">Name</label>
+                    <input asp-for="UsersName" class="form-control" />
+                    <span asp-validation-for="UsersName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UsersEmail" class="form-label">Email</label>
+                    <input asp-for="UsersEmail" class="form-control" />
+                    <span asp-validation-for="UsersEmail" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UsersPhoneNumber" class="form-label">Phone Number</label>
+                    <input asp-for="UsersPhoneNumber" class="form-control" />
+                    <span asp-validation-for="UsersPhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UsersPassword" class="form-label">New Password (leave blank if not changing)</label>
+                    <input asp-for="UsersPassword" type="password" class="form-control" />
+                    <span asp-validation-for="UsersPassword" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UsersPasswordConfirmation" class="form-label">Confirm New Password</label>
+                    <input asp-for="UsersPasswordConfirmation" type="password" class="form-control" />
+                    <span asp-validation-for="UsersPasswordConfirmation" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

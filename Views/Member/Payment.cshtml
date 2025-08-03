@@ -1,0 +1,148 @@
+﻿@model GYM_APP.ViewModels.MemberVMs.PaymentViewModel
+@{
+    ViewData["Title"] = "Payment";
+}
+
+<section class="py-5" style="background: #f8f9fa;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Choose Payment Method</h2>
+            <p class="text-muted">Complete your subscription by selecting a preferred payment option.</p>
+        </div>
+
+        <div class="mx-auto shadow-sm bg-white rounded-4 p-4" style="max-width: 700px;">
+            <div class="mb-4">
+                <div class="d-flex justify-content-between">
+                    <p><strong>Date:</strong></p>
+                    <p>@DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")</p>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <p><strong>Package type:</strong></p>
+                    <p>@Model.PackageName</p>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <p><strong>Total Price:</strong></p>
+                    <p class="text-dark fw-bold">@Model.PackagePrice.ToString("N0") SAR</p>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs nav-pills nav-justified mb-4" id="paymentTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="card-tab" data-bs-toggle="tab" data-bs-target="#card" type="button" role="tab">
+                        <i class="far fa-credit-card fa-lg me-1"></i> Credit Card
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="cash-tab" data-bs-toggle="tab" data-bs-target="#cash" type="button" role="tab">
+                        <i class="fas fa-money-bill-wave fa-lg me-1"></i> Cash
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="paymentTabContent">
+                <!-- Credit Card Tab -->
+                <div class="tab-pane fade show active" id="card" role="tabpanel">
+                    <form id="paymentForm" method="post" asp-action="ConfirmPayment" asp-controller="Member">
+                        <input type="hidden" name="PaymentMethod" id="paymentMethodInput" value="card">
+                        <input type="hidden" name="PackageId" value="@Model.PackageId">
+
+                        <div class="mb-3">
+                            <label for="cardNumber" class="form-label">Card Number</label>
+                            <input type="text" class="form-control form-control-lg" id="cardNumber" name="CardNumber" maxlength="19" required>
+                            <div class="text-danger small d-none" id="cardNumberError">Card number must be 16 digits</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="expiryMonth" class="form-label">Expiry Month</label>
+                                <select class="form-select form-select-lg" name="ExpiryMonth" id="expiryMonth" required>
+                                    <option value="">Month</option>
+                                    @for (int i = 1; i <= 12; i++)
+                                    {
+                                        <option value="@i.ToString("00")">@i.ToString("00")</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="expiryYear" class="form-label">Expiry Year</label>
+                                <select class="form-select form-select-lg" name="ExpiryYear" id="expiryYear" required>
+                                    <option value="">Year</option>
+                                    @for (int y = DateTime.Now.Year; y <= 2035; y++)
+                                    {
+                                        <option value="@y">@y</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cvc" class="form-label">CVC</label>
+                            <input type="text" class="form-control form-control-lg" id="cvc" name="Cvc" maxlength="4" required>
+                            <div class="text-danger small d-none" id="cvcError">CVC must be 3 or 4 digits</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-4 shadow-sm">Confirm & Continue</button>
+                    </form>
+                </div>
+
+                <!-- Cash Tab -->
+                <div class="tab-pane fade" id="cash" role="tabpanel">
+                    <div class="text-center">
+                        <i class="fas fa-money-bill-wave fa-3x text-success mb-3"></i>
+                        <p class="lead text-muted">Please note: Your subscription will be activated within <strong>approximately 3 days</strong> after confirmation.</p>
+                    </div>
+
+                    <form method="post" asp-action="ConfirmPayment" asp-controller="Member">
+                        <input type="hidden" name="PaymentMethod" value="cash">
+                        <input type="hidden" name="PackageId" value="@Model.PackageId">
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-4 shadow-sm">Confirm & Continue</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cardInput = document.getElementById('cardNumber');
+            const cvcInput = document.getElementById('cvc');
+            const cardError = document.getElementById('cardNumberError');
+            const cvcError = document.getElementById('cvcError');
+
+            document.getElementById('card-tab').addEventListener('click', () => {
+                document.getElementById('paymentMethodInput').value = 'card';
+            });
+
+            document.getElementById('cash-tab').addEventListener('click', () => {
+                document.getElementById('paymentMethodInput').value = 'cash';
+            });
+
+            cardInput.addEventListener('input', function () {
+                this.value = this.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+                const digits = this.value.replace(/\s/g, '');
+                cardError.classList.toggle('d-none', digits.length === 16);
+            });
+
+            cvcInput.addEventListener('input', function () {
+                this.value = this.value.replace(/[^\d]/g, '');
+                const valid = this.value.length >= 3 && this.value.length <= 4;
+                cvcError.classList.toggle('d-none', valid);
+            });
+
+            document.getElementById('paymentForm').addEventListener('submit', function (e) {
+                const digits = cardInput.value.replace(/\s/g, '');
+                const cvcValid = cvcInput.value.length >= 3 && cvcInput.value.length <= 4;
+
+                if (digits.length !== 16 || !cvcValid) {
+                    e.preventDefault();
+                    cardError.classList.toggle('d-none', digits.length === 16);
+                    cvcError.classList.toggle('d-none', cvcValid);
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,292 @@
+﻿@model GYM_APP.ViewModels.ScanPageViewModel
+@{
+    ViewData["Title"] = "Class Attendance";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">
+            <i class="fas fa-calendar-check me-2"></i>Class Attendance
+        </h1>
+        <p class="lead">Manage your class bookings and attendance</p>
+    </div>
+
+    @if (!Model.Bookings.Any())
+    {
+        <div class="alert alert-warning text-center">
+            <i class="fas fa-exclamation-circle me-2"></i>You have no booked classes.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Booked Classes Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h5 mb-0">
+                            <i class="fas fa-list-alt me-2"></i>Your Booked Classes
+                        </h2>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Class</th>
+                                        <th>Trainer</th>
+                                        <th>Day</th>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.Bookings)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@booking.ClassSchedule.Classes.ClassesName</strong>
+                                                <small class="d-block text-muted">@booking.ClassSchedule.Classes.ClassesDurationMinutes min</small>
+                                            </td>
+                                            <td>@booking.ClassSchedule.Classes.Trainer.UsersName</td>
+                                            <td>@booking.ClassSchedule.ClassScheduleDayOfWeek</td>
+                                            <td>@booking.ClassSchedule.ClassScheduleTime</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary record-attendance"
+                                                        data-schedule="@booking.ClassSchedule.ClassScheduleId"
+                                                        data-booking="@booking.BookingId"
+                                                        title="Check in for this class">
+                                                    <i class="fas fa-user-check"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Scanner Section -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h5 mb-0">
+                            <i class="fas fa-qrcode me-2"></i>QR Code Check-In
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="schedule_select" class="form-label">Select Class to Check-In</label>
+                            <select id="schedule_select" class="form-select">
+                                <option value="">-- Select a class --</option>
+                                @foreach (var booking in Model.Bookings)
+                                {
+                                    <option value="@booking.ClassSchedule.ClassScheduleId|@booking.BookingId">
+                                        @booking.ClassSchedule.Classes.ClassesName (@booking.ClassSchedule.ClassScheduleDayOfWeek at @booking.ClassSchedule.ClassScheduleTime)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <div id="video-container" class="border rounded p-2 mb-3" style="display: none;">
+                                <video id="video" class="img-fluid"></video>
+                            </div>
+
+                            <button id="start_scan" class="btn btn-primary">
+                                <i class="fas fa-camera me-2"></i>Start Scanner
+                            </button>
+                            <button id="stop_scan" class="btn btn-danger" style="display: none;">
+                                <i class="fas fa-stop-circle me-2"></i>Stop Scanner
+                            </button>
+                        </div>
+
+                        <div id="result" class="alert alert-info text-center" style="display: none;">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Scanning for QR codes...
+                        </div>
+
+                        <div class="alert alert-secondary mt-3">
+                            <h5 class="h6"><i class="fas fa-info-circle me-2"></i>How to check-in:</h5>
+                            <ol class="mb-0 small">
+                                <li>Select the class you want to check-in for</li>
+                                <li>Click "Start Scanner" and point your camera at the QR code</li>
+                                <li>Or click the checkmark icon next to your class for manual check-in</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            border-radius: 0 !important;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+
+        #video-container {
+            background: #000;
+        }
+
+        #video {
+            max-height: 300px;
+            margin: 0 auto;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const video = document.getElementById('video');
+            const resultElement = document.getElementById('result');
+            const startBtn = document.getElementById('start_scan');
+            const stopBtn = document.getElementById('stop_scan');
+            const scheduleSelect = document.getElementById('schedule_select');
+            const videoContainer = document.getElementById('video-container');
+            let stream = null;
+            let scanning = false;
+
+            // Start QR Scanner
+            startBtn.onclick = async () => {
+                if (!scheduleSelect.value) {
+                    showAlert('Please select a class first.', 'warning');
+                    return;
+                }
+
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment' }
+                    });
+                    video.srcObject = stream;
+                    video.play();
+
+                    $(startBtn).hide();
+                    $(stopBtn).show();
+                    $(videoContainer).show();
+                    $(resultElement).show().html('<i class="fas fa-spinner fa-spin me-2"></i>Scanning for QR codes...');
+
+                    scanning = true;
+                    scan();
+                } catch (err) {
+                    showAlert('Could not access the camera: ' + err.message, 'danger');
+                }
+            };
+
+            // Stop QR Scanner
+            stopBtn.onclick = () => {
+                scanning = false;
+                if (stream) {
+                    stream.getTracks().forEach(t => t.stop());
+                    video.srcObject = null;
+                }
+
+                $(startBtn).show();
+                $(stopBtn).hide();
+                $(videoContainer).hide();
+                $(resultElement).hide();
+            };
+
+            // QR Scanning function
+            function scan() {
+                if (!scanning) return;
+
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code) {
+                        showAlert('QR code detected! Processing...', 'success');
+                        sendAttendance(code.data);
+                        return;
+                    }
+                }
+
+                requestAnimationFrame(scan);
+            }
+
+            // Send attendance to server
+            function sendAttendance(qrData) {
+                if (!scheduleSelect.value) {
+                    showAlert('No class selected.', 'warning');
+                    return;
+                }
+
+                const [scheduleId, bookingId] = scheduleSelect.value.split('|');
+
+                $(resultElement).html('<i class="fas fa-spinner fa-spin me-2"></i>Recording attendance...');
+
+                $.ajax({
+                    url: '@Url.Action("Record", "Attendance")',
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    data: {
+                        qrData: qrData,
+                        scheduleId: scheduleId,
+                        bookingId: bookingId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showAlert('<i class="fas fa-check-circle me-2"></i>Attendance recorded successfully!', 'success');
+                        } else {
+                            showAlert('<i class="fas fa-exclamation-triangle me-2"></i>' + response.message, 'danger');
+                        }
+                    },
+                    error: function(xhr) {
+                        showAlert('<i class="fas fa-times-circle me-2"></i>Error: ' + (xhr.responseJSON?.message || 'Server error'), 'danger');
+                    }
+                });
+            }
+
+            // Manual attendance buttons
+            $('.record-attendance').click(function() {
+                const scheduleId = $(this).data('schedule');
+                const bookingId = $(this).data('booking');
+                const qrData = "@Context.Session.GetInt32("UserId")|member";
+
+                // Set the dropdown value
+                scheduleSelect.value = `${scheduleId}|${bookingId}`;
+
+                // Show confirmation
+                if (confirm('Are you sure you want to check in for this class?')) {
+                    $(resultElement).show().html('<i class="fas fa-spinner fa-spin me-2"></i>Recording attendance...');
+                    sendAttendance(qrData);
+                }
+            });
+
+            function showAlert(message, type) {
+                const alertClass = 'alert-' + type;
+                $(resultElement).html(message).removeClass().addClass('alert ' + alertClass).show();
+
+                if (type === 'success') {
+                    setTimeout(() => {
+                        $(resultElement).fadeOut();
+                    }, 3000);
+                }
+            }
+        });
+    </script>
+}

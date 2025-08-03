@@ -1,0 +1,133 @@
+﻿@model GYM_APP.ViewModels.UsersVMs.MembersListViewModel
+
+@{
+    ViewData["Title"] = "Members List";
+}
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h4 class="mb-0">Members List</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Joined At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var member in Model.Members)
+                    {
+                        <tr>
+                            <td>@member.UsersName</td>
+                            <td>@member.UsersEmail</td>
+                            <td>@member.UsersPhoneNumber</td>
+                            <td>@member.UsersJoinedAt</td>
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#whatsappModal@(member.UsersId)">
+                                    <i class="fab fa-whatsapp"></i>
+                                </button>
+
+                                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailsModal@(member.UsersId)">
+                                    Show Details
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- WhatsApp Modal -->
+                        <div class="modal fade" id="whatsappModal@(member.UsersId)" tabindex="-1" aria-labelledby="whatsappModalLabel@(member.UsersId)" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form method="get" onsubmit="return redirectToWhatsapp('@member.UsersPhoneNumber', this)">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Send WhatsApp Message</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <textarea name="message" class="form-control" placeholder="Type your message here..." required></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success">Send</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Details Modal -->
+                        <div class="modal fade" id="detailsModal@(member.UsersId)" tabindex="-1" aria-labelledby="detailsModalLabel@(member.UsersId)" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Member Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Member details would be loaded via AJAX or another method -->
+                                        <p>Member details would be shown here.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav>
+                <ul class="pagination">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="ListMembers" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+                        </li>
+                    }
+
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="ListMembers" asp-route-page="@i">@i</a>
+                        </li>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="ListMembers" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function redirectToWhatsapp(phone, form) {
+            const message = form.message.value;
+            const encodedMessage = encodeURIComponent(message);
+            const fullNumber = phone.toString().replace(/^0/, '966');
+            const whatsappURL = `https://wa.me/${fullNumber}?text=${encodedMessage}`;
+            window.open(whatsappURL, '_blank');
+            return false;
+        }
+
+        // You would add AJAX code here to load member details when modal is shown
+        $(document).ready(function () {
+            $('[data-bs-toggle="modal"]').on('click', function () {
+                var modalId = $(this).data('bs-target');
+                // Load details via AJAX if needed
+            });
+        });
+    </script>
+}

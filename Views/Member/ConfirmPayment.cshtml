@@ -1,0 +1,42 @@
+﻿@model GYM_APP.ViewModels.MemberVMs.ConfirmPaymentViewModel
+@{
+    ViewData["Title"] = "Verify Payment";
+}
+
+<section class="py-5" style="background: #f8f9fa;">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+            <div class="card shadow p-4" style="width: 400px; border-radius: 12px;">
+                <div class="text-center mb-3">
+                    <img style="width: 100%;" src="~/images/payment.png" alt="mada" class="me-2" height="">
+                </div>
+                <div class="text-center mb-2">
+                    <strong class="text-muted">Verify by Phone</strong>
+                </div>
+                <p class="text-center small text-muted mb-4">
+                    Please enter the one-time password (OTP) sent by SMS to your mobile to execute the transaction with following details:
+                </p>
+                <ul class="list-unstyled small mb-4">
+                    <li><strong>Merchant:</strong> fitnesswomen.sa</li>
+                    <li><strong>Amount:</strong> SAR @Model.PackagePrice.ToString("N2")</li>
+                    <li><strong>Date:</strong> @Model.PaymentTime.ToString("yyyy/MM/dd HH:mm:ss")</li>
+                    <li><strong>Card Number:</strong> ****@Model.CardLastFour</li>
+                </ul>
+                <form id="fromPaymentOPT" method="post" asp-action="VerifyOtp" asp-controller="Member">
+                    <input type="hidden" name="PackageId" value="@Model.PackageId">
+
+                    <p class="text-center text-muted small"> Your OTP is <strong>@Model.Otp</strong></p>
+                    <div class="mb-3">
+                        <input type="text" name="Otp" class="form-control text-center" placeholder="Enter your OTP" required>
+                        <span asp-validation-for="Otp" class="text-danger small d-block mt-1"></span>
+                    </div>
+                    <button form="fromPaymentOPT" type="submit" class="btn btn-dark w-100 mb-2">Verify</button>
+                </form>
+                <a asp-action="Payment" asp-controller="Member" asp-route-packageId="@Model.PackageId" class="btn btn-secondary w-100">Resend OTP</a>
+                <div class="text-end mt-3">
+                    <a asp-action="Index" asp-controller="Packages" class="text-danger small">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

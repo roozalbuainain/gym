@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero -->
+<div class="hero text-center">
+    <img src="~/images/hero.png">
+</div>
+
+<!-- Fitness & Health -->
+<section class="py-5 bg-light text-center">
+    <div class="container">
+        <h4 class="mb-4">Fitness & health</h4>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="info-box">
+                    <i class="fas fa-heart fa-3x mb-2 text-danger"></i>
+                    <p>
+                        Every move you make strengthens your heart and adds life to your years. Fitness is the simplest way to
+                        love yourself more each day.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-box">
+                    <i class="fas fa-spa fa-3x mb-2 text-danger"></i>
+                    <p>Sport is not just a set of exercises, it's a massage of love we send to our bodies.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Carousel -->
+<div id="collabCarousel" class="carousel slide py-5 container" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        @for (int i = 1; i <= 8; i++)
+        {
+            <div class="carousel-item @(i == 1 ? "active" : "")">
+                <img src="~/images/slider(@i).png" class="d-block w-100" alt="Slide @i">
+            </div>
+        }
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#collabCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#collabCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </button>
+</div>
+
+
+<section class="py-5">
+    <div class="container">
+        <h4 class="text-center mb-5">About Class</h4>
+        <div class="row g-4">
+            @if (Model?.Classes != null)
+            {
+                @foreach (var classItem in Model.Classes)
+                {
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-lg">
+                            <img src="~/images/class.jpg" class="card-img-top" alt="@classItem.ClassesName">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-star text-danger"></i> @classItem.ClassesName
+                                </h6>
+                                <p class="card-text">@classItem.ClassesDescription</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-danger">No classes found.</p>
+            }
+        </div>
+    </div>
+</section>
+
+
+<!-- Join Section -->
+<section class="text-center py-5 bg-light">
+    <div class="container">
+        <h4>Join Our class</h4>
+        <a asp-action="Packages" asp-controller="Website" class="btn btn-pink mt-3" style="background:#f77ca2;color:#fff;">Packages</a>
+    </div>
+</section>

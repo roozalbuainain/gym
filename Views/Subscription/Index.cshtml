@@ -1,0 +1,95 @@
+﻿@model IEnumerable<GYM_APP.ViewModels.SubscribtionsVMs.SubscriptionIndexViewModel>
+
+@{
+    ViewData["Title"] = "Subscriptions";
+}
+
+<div class="card">
+    <div class="card-header"><h5>Subscriptions</h5></div>
+    <div class="card-body">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Member ID</th>
+                    <th>Member</th>
+                    <th>Package</th>
+                    <th>Status</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sub in Model)
+                {
+                    <tr>
+                        <td>@sub.UsersId</td>
+                        <td>@sub.UserName</td>
+                        <td>@sub.PackageName</td>
+                        <td>
+                            @{
+                                var status = sub.SubscriptionsStatus.ToLower();
+                                var badgeClass = status switch
+                                {
+                                    "active" => "success",
+                                    "inactive" => "danger",
+                                    "frozen" => "warning",
+                                    _ => "danger"
+                                };
+                            }
+                            <span class="badge bg-@badgeClass">
+                                @status
+                            </span>
+                        </td>
+                        <td>@sub.SubscriptionsStartDate.ToString("d")</td>
+                        <td>@sub.SubscriptionsEndDate.ToString("d")</td>
+                        <td>
+                            <a href="@Url.Action("Invoice", new { id = sub.SubscriptionsId })"
+                               class="btn btn-primary btn-sm mb-1" target="_blank">
+                                Print Invoice <i class="fa fa-print"></i>
+                            </a>
+
+                            @if (status == "inactive")
+                            {
+                                <form method="POST" action="@Url.Action("Activate", new { id = sub.SubscriptionsId })" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success btn-sm mb-1">
+                                        Activate <i class="fa fa-check"></i>
+                                    </button>
+                                </form>
+                            }
+                            else if (status == "active")
+                            {
+                                <form method="POST" action="@Url.Action("Freeze", new { id = sub.SubscriptionsId })" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-warning btn-sm mb-1">
+                                        Freeze <i class="fa fa-pause-circle"></i>
+                                    </button>
+                                </form>
+                            }
+                            else if (status == "frozen")
+                            {
+                                <form method="POST" action="@Url.Action("Unfreeze", new { id = sub.SubscriptionsId })" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-info btn-sm mb-1">
+                                        Unfreeze <i class="fa fa-play-circle"></i>
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

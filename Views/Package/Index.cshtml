@@ -1,0 +1,54 @@
+﻿@model IEnumerable<GYM_APP.ViewModels.PackageVMs.PackageIndexViewModel>
+
+@{
+    ViewData["Title"] = "Packages";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4>Packages</h4>
+    <a asp-action="Create" class="btn btn-primary">Add Package</a>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Duration (days)</th>
+                    <th>Price</th>
+                    <th>Type</th>
+                    <th>Max Freeze Days</th>
+                    <th>Refund Policy Days</th>
+                    <th>Daily Charge</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var package in Model)
+                {
+                    <tr>
+                        <td>@package.PackagesName</td>
+                        <td>@package.PackagesDurationDays</td>
+                        <td>@package.PackagesPrice</td>
+                        <td>@package.PackagesType</td>
+                        <td>@package.PackagesMaxFreezeDays</td>
+                        <td>@package.RefundPolicyDays</td>
+                        <td>@package.DailyChargeIfStarted</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@package.PackagesId" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@package.PackagesId" method="post" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

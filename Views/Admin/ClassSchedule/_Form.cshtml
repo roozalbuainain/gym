@@ -1,0 +1,27 @@
+﻿@model GYM_APP.ViewModels.AdminVMs.ClassScheduleViewModel
+
+<div class="mb-3">
+    <label asp-for="ClassScheduleDayOfWeek" class="form-label"></label>
+    <select asp-for="ClassScheduleDayOfWeek" class="form-control" required>
+        <option value="">-- Select Day --</option>
+        @foreach (var day in new[] { "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" })
+        {
+            <option value="@day">@day</option>
+        }
+    </select>
+    <span asp-validation-for="ClassScheduleDayOfWeek" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="ClassScheduleTime" class="form-label"></label>
+    <input asp-for="ClassScheduleTime" type="time" class="form-control" required />
+    <span asp-validation-for="ClassScheduleTime" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="ClassesId" class="form-label">Class</label>
+    <select asp-for="ClassesId" asp-items="@(new SelectList(ViewBag.Classes, "ClassesId", "ClassesName"))" class="form-control" required>
+        <option value="">-- Select Class --</option>
+    </select>
+    <span asp-validation-for="ClassesId" class="text-danger"></span>
+</div>

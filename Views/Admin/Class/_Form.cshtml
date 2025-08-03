@@ -1,0 +1,37 @@
+﻿@model GYM_APP.ViewModels.ClassVMs.ClassCreateViewModel
+
+<div class="mb-3">
+    <label asp-for="ClassesName" class="form-label"></label>
+    <input asp-for="ClassesName" class="form-control" />
+    <span asp-validation-for="ClassesName" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="ClassesDescription" class="form-label"></label>
+    <textarea asp-for="ClassesDescription" class="form-control"></textarea>
+    <span asp-validation-for="ClassesDescription" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="ClassesDurationMinutes" class="form-label"></label>
+    <input asp-for="ClassesDurationMinutes" class="form-control" />
+    <span asp-validation-for="ClassesDurationMinutes" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="ClassesCapacity" class="form-label"></label>
+    <input asp-for="ClassesCapacity" class="form-control" />
+    <span asp-validation-for="ClassesCapacity" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="TrainerId" class="form-label"></label>
+    <select asp-for="TrainerId" class="form-control" required>
+        <option value="">Choose</option>
+        @foreach (var trainer in ViewBag.Trainers)
+        {
+            <option value="@trainer.UsersId">@trainer.UsersName</option>
+        }
+    </select>
+    <span asp-validation-for="TrainerId" class="text-danger"></span>
+</div>

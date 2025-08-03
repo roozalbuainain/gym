@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - Women's Fitness Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/custom.css" rel="stylesheet" asp-append-version="true">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" asp-controller="Website" asp-action="Home">
+                <img src="~/images/logo.png" alt="Logo" width="245" class="me-2">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon text-white"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav gap-3">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                           asp-controller="Website" asp-action="Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Classes" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                           asp-controller="Website" asp-action="Classes">Classes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Packages" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                           asp-controller="Website" asp-action="Packages">Packages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "About" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                           asp-controller="Website" asp-action="About">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                           asp-controller="Website" asp-action="Contact">Contact Us</a>
+                    </li>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Auth" && ViewContext.RouteData.Values["Action"]?.ToString() == "Login" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                               asp-controller="Auth" asp-action="Login">Login</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "QrGenerator" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                               asp-controller="Attendance" asp-action="QrGenerator">Attendance</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Profile" ? "active bg-light rounded px-3 text-dark" : "text-white")"
+                               asp-controller="Member" asp-action="Profile">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-controller="Auth" asp-action="Logout" method="post">
+                                <button type="submit" class="nav-link text-white bg-transparent border-0">Logout</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-white">
+        <div class="container">
+            <div class="row">
+                <!-- Logo + Contact -->
+                <div class="col-md-4 mb-1">
+                    <img src="~/images/logo.png" alt="Logo" style="max-width: 150px;" class="mb-2">
+                    <h6>Contact</h6>
+                    <p>
+                        W F C Al Jubail Saudi Arabia<br>
+                        +966 500 554 111<br>
+                        Fitness_women@hotmail.com
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-4 mb-1">
+                    <h6>Quick Links</h6>
+                    <a asp-controller="Website" asp-action="About" class="d-block text-white">About Us</a>
+                    <a asp-controller="Website" asp-action="Packages" class="d-block text-white">Packages</a>
+                    <a asp-controller="Website" asp-action="Classes" class="d-block text-white">Classes</a>
+                    <a asp-controller="Website" asp-action="Contact" class="d-block text-white">Contact Us</a>
+                </div>
+
+                <!-- Social Icons -->
+                <div class="col-md-4 mb-1">
+                    <h6>Follow Us</h6>
+                    <div class="social-icons d-flex gap-3">
+                        <a href="#" class="text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <p class="text-center m-0">Copyright © 2025 Designed with love by Fitness Women.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

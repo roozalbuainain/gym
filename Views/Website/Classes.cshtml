@@ -1,0 +1,66 @@
+﻿@model GYM_APP.ViewModels.WebsiteVMs.ClassesViewModel
+@{
+    ViewData["Title"] = "Our Classes";
+}
+
+<section class="py-5">
+    <div class="container">
+        <h4 class="text-center mb-5">Explore Our Classes & Schedule</h4>
+        <div class="row g-4">
+            @foreach (var classItem in Model.Classes)
+            {
+                <div class="col-md-12">
+                    <div class="card shadow-lg h-100">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="~/images/class.jpg" class="img-fluid h-100 rounded-start object-fit-cover" alt="@classItem.ClassName">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title text-danger">
+                                        <i class="fas fa-dumbbell me-2"></i>@classItem.ClassName
+                                    </h5>
+                                    <p class="card-text text-muted">@classItem.ClassDescription</p>
+                                    @if (classItem.Schedules.Any())
+                                    {
+                                        <h6 class="mt-3 fw-semibold">Weekly Schedule:</h6>
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                            @foreach (var schedule in classItem.Schedules)
+                                            {
+                                                <div class="schedule-badge border rounded-pill px-3 py-2 d-flex align-items-center shadow-sm bg-light text-dark">
+                                                    <i class="fas fa-calendar-alt me-2 text-primary"></i>
+                                                    <span class="fw-semibold text-capitalize">@schedule.DayOfWeek</span>
+                                                    <span class="mx-2 text-muted">|</span>
+                                                    <i class="fas fa-clock me-1 text-danger"></i>
+                                                    <span class="fw-bold">@schedule.Time?.ToString("h:mm tt")</span>
+                                                </div>
+                                            }
+                                        </div>
+                                        <hr>
+                                        <div>
+                                            @if (classItem.AvgRating.HasValue)
+                                            {
+                                                <p class="mb-2">
+                                                    <i class="fas fa-star text-warning"></i>
+                                                    <span class="fw-semibold">Avg Rating:</span> @classItem.AvgRating.Value.ToString("N1")/5
+                                                </p>
+                                            }
+
+                                            <a asp-action="ClassDetails" asp-controller="Member" asp-route-id="@classItem.ClassId" class="btn btn-sm btn-primary w-50 mt-2">
+                                                <i class="fas fa-info-circle me-1"></i> View Details
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted"><em>No scheduled sessions.</em></p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

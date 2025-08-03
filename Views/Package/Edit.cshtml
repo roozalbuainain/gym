@@ -1,0 +1,30 @@
+﻿@model GYM_APP.ViewModels.PackageVMs.PackageEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Package";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">Edit Package</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="PackagesId" />
+
+                <partial name="_Form" model="Model" />
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i> Update
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+﻿@model GYM_APP.ViewModels.FeedbackVMs.FeedbackIndexViewModel
+
+@{
+    ViewData["Title"] = "Class Feedbacks";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Class Feedbacks</h5>
+    </div>
+
+    <form method="GET" class="row g-2 p-3">
+        <div class="col-md-4">
+            <select name="classId" class="form-select">
+                <option value="">All Classes</option>
+                @foreach (var classItem in Model.Classes)
+                {
+                    <option value="@classItem.ClassesId" selected="@(Model.SelectedClassId == classItem.ClassesId ? "selected" : null)">
+                        @classItem.ClassesName
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i> Filter</button>
+        </div>
+    </form>
+
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Class</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Reviews.Any())
+                {
+                    @foreach (var review in Model.Reviews)
+                    {
+                        <tr>
+                            <td>@review.UserName</td>
+                            <td>@review.ClassName</td>
+                            <td>@review.ReviewsRating/5</td>
+                            <td>@review.ReviewsComment</td>
+                            <td>@review.ReviewsDate.ToString("d")</td>
+                            <td>@review.ReviewsTime.ToString("t")</td>
+                            <td>
+                                <form method="POST" asp-action="Delete" asp-route-id="@review.ReviewsId" onsubmit="return confirm('Delete this review?')">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="7" class="text-center">No reviews found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

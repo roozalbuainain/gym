@@ -1,0 +1,25 @@
+﻿@model GYM_APP.ViewModels.PackageVMs.PackageCreateViewModel
+
+@{
+    ViewData["Title"] = "Add Package";
+}
+
+<h4 class="mb-4">Add Package</h4>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <partial name="_Form" model="Model" />
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save me-1"></i> Save
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

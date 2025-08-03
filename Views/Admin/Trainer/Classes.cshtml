@@ -1,0 +1,50 @@
+﻿@model GYM_APP.ViewModels.TrainerVMs.TrainerClassesViewModel
+
+@{
+    ViewData["Title"] = "My Classes";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+    </div>
+    <div class="card bg-white shadow-sm rounded-lg mb-8">
+        <div class="card-header bg-gray-100 rounded-t-lg">
+            <h5 class="text-xl font-semibold text-gray-800">My Classes</h5>
+            <p class="text-gray-600">Manage your classes and schedules efficiently</p>
+        </div>
+        <div class="card-body p-6">
+            <div class="overflow-x-auto">
+                <table class="table w-full table-bordered table-hover">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left">Class Name</th>
+                            <th class="px-4 py-2 text-left">Capacity</th>
+                            <th class="px-4 py-2 text-left">Total Schedules</th>
+                            <th class="px-4 py-2 text-left">Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Classes.Any())
+                        {
+                            @foreach (var classItem in Model.Classes)
+                            {
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-2">@classItem.ClassesName</td>
+                                    <td class="px-4 py-2">@classItem.ClassesCapacity</td>
+                                    <td class="px-4 py-2">@classItem.SchedulesCount</td>
+                                    <td class="px-4 py-2">@classItem.BookingsCount</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-gray-500">No classes found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

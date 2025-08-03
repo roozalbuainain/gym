@@ -1,0 +1,106 @@
+﻿@model GYM_APP.ViewModels.MemberVMs.ProfileViewModel
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<partial name="_Navbar" />
+
+<section class="py-5">
+    <div class="container">
+        <h4 class="mb-4 text-center text-primary">Update Profile</h4>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form method="post" asp-action="UpdateProfile" asp-controller="Member">
+                    <div class="card shadow border-0 p-4">
+                        <h5 class="text-primary mb-3">User Information</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Full Name</label>
+                                <input type="text" asp-for="Name" class="form-control">
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Email</label>
+                                <input type="email" asp-for="Email" class="form-control">
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Phone Number</label>
+                                <input type="text" asp-for="Phone" class="form-control">
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <h5 class="text-primary mb-3">Reset Password(optional)</h5>
+                        <div class="mb-3">
+                            <label>New Password</label>
+                            <input type="password" asp-for="Password" class="form-control" placeholder="Leave blank to keep current password">
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Confirm New Password</label>
+                            <input type="password" asp-for="ConfirmPassword" class="form-control">
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                        <hr class="my-4">
+                        <h5 class="text-primary mb-3">Member Information</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Age</label>
+                                <input type="number" asp-for="Age" class="form-control">
+                                <span asp-validation-for="Age" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Height (cm)</label>
+                                <input type="number" asp-for="HeightCm" class="form-control">
+                                <span asp-validation-for="HeightCm" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Weight (kg)</label>
+                                <input type="number" asp-for="WeightKg" class="form-control">
+                                <span asp-validation-for="WeightKg" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Body Size</label>
+                                <input type="text" asp-for="BodySize" class="form-control">
+                                <span asp-validation-for="BodySize" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Health Status</label>
+                                <input type="text" asp-for="HealthStatus" class="form-control">
+                                <span asp-validation-for="HealthStatus" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Fitness Goals</label>
+                                <input type="text" asp-for="FitnessGoals" class="form-control">
+                                <span asp-validation-for="FitnessGoals" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

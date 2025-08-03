@@ -1,0 +1,79 @@
+﻿@model GYM_APP.ViewModels.AdminVMs.DashboardViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="wrapper">
+    <partial name="_AdminLayout" />
+
+    <div id="content">
+        <div class="container-fluid">
+            <h2 class="mb-4">Admin Dashboard</h2>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-start border-primary border-4">
+                        <div class="card-body">
+                            <h5>Total Members</h5>
+                            <h3 class="text-primary">@Model.Members</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-start border-success border-4">
+                        <div class="card-body">
+                            <h5>Total Subscriptions</h5>
+                            <h3 class="text-success">@Model.SubscriptionCount</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-start border-warning border-4">
+                        <div class="card-body">
+                            <h5>Total Packages</h5>
+                            <h3 class="text-warning">@Model.PackageCount</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Monthly Subscriptions</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="subscriptionChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('subscriptionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize((Model.MonthlySubscriptions as dynamic).Labels)),
+                datasets: [{
+                    label: 'Subscriptions',
+                    data: @Html.Raw(Json.Serialize((Model.MonthlySubscriptions as dynamic).Data)),
+                    backgroundColor: '#f06292',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, stepSize: 1 }
+                }
+            }
+        });
+    </script>
+}

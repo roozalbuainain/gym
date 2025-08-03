@@ -1,0 +1,33 @@
+﻿@model GYM_APP.ViewModels.ClassVMs.ClassCreateViewModel
+
+@{
+    ViewData["Title"] = "Add New Class";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5>Add New Class</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <partial name="~/Views/Admin/Class/_Form.cshtml" model="Model" />
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save me-1"></i> Save
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

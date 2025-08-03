@@ -1,0 +1,104 @@
+﻿@model GYM_APP.ViewModels.QrGeneratorViewModel
+@{
+    ViewData["Title"] = "Attendance QR Code";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold text-primary">
+            <i class="fas fa-qrcode me-2"></i> Attendance QR Code
+        </h1>
+    </div>
+
+    @if (!Model.Bookings.Any())
+    {
+        <div class="alert alert-warning text-center">
+            <i class="fas fa-calendar-times me-2"></i> No classes scheduled for today.
+        </div>
+    }
+    else
+    {
+        var booking = Model.Bookings.First();
+        var scheduleId = booking.ClassSchedule.ClassScheduleId;
+        var bookingId = booking.BookingId;
+        var qrData = $"{Model.UserId}|member|{scheduleId}|{bookingId}";
+
+        <div class="card shadow mx-auto" style="max-width: 600px;">
+            <div class="card-body">
+                <div class="mb-4">
+                    <p class="lead text-center">
+                        You have a class today:
+                        <strong>@booking.ClassSchedule.Classes.ClassesName</strong>
+                        at <strong>@booking.ClassSchedule.ClassScheduleTime</strong>.
+                    </p>
+
+                    <div class="alert alert-info">
+                        <strong>Instructions:</strong><br>
+                        - Scan the QR code below to mark your attendance.<br>
+                        - First scan = <strong>Check-In</strong>, second scan = <strong>Check-Out</strong>.<br>
+                        - You can also mark manually by clicking the button.
+                    </div>
+                </div>
+
+                <canvas id="qr-code-canvas" class="d-block mx-auto border p-2"></canvas>
+                <div id="qr-data-label" class="text-muted text-center small mt-2"></div>
+
+                <button id="manual-btn" class="btn btn-primary w-100 mt-4">
+                    <i class="fas fa-user-check me-1"></i> Mark Attendance Manually
+                </button>
+            </div>
+        </div>
+
+        @section Scripts {
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const qr = new QRious({
+                        element: document.getElementById('qr-code-canvas'),
+                        size: 250,
+                        value: ''
+                    });
+
+                    const label = document.getElementById('qr-data-label');
+                    const manualBtn = document.getElementById('manual-btn');
+
+                    let scannedOnce = false;
+
+                    const qrData = '@qrData';
+                    const scheduleId = '@scheduleId';
+                    const bookingId = '@bookingId';
+
+                    qr.value = qrData;
+                    label.innerText = `QR Data: ${qrData} (auto check-in/out)`;
+
+                    manualBtn.onclick = function () {
+                        const mode = scannedOnce ? 'checkout' : 'checkin';
+
+                        fetch('@Url.Action("Record", "Attendance")', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            body: JSON.stringify({
+                                qrData: qrData,
+                                scheduleId: scheduleId,
+                                bookingId: bookingId,
+                                mode: mode
+                            })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert(`Attendance marked successfully as ${mode.toUpperCase()}.`);
+                                    scannedOnce = true;
+                                } else {
+                                    alert('Failed to mark attendance.');
+                                }
+                            });
+                    };
+                });
+            </script>
+        }
+    }
+</div>
